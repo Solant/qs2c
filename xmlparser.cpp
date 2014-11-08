@@ -141,6 +141,7 @@ QList<AppData> *XMLParser::readAppsSettings(QStringList files)
     QList<AppData>* apps = new QList<AppData>();
     for(int i = 0; i < files.size(); i++)
         apps->append(readAppSettings(files.at(i)));
+
     return apps;
 }
 
