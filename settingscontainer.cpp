@@ -20,10 +20,9 @@ QMap<QString, QString>* SettingsContainer::settings()
 
 QList<AppData> *SettingsContainer::apps()
 {
-    if(!m_Apps){
-        XMLParser parser;
-        m_Apps = parser.readAppsSettings(parser.preparedConfigsPaths());
-    }
+    if(!m_Apps)
+        m_Apps = new QList<AppData>();
+
     return m_Apps;
 }
 

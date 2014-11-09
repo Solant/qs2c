@@ -56,6 +56,7 @@ void Settings::on_pushButton_clicked()
 
 void Settings::closeEvent(QCloseEvent *event)
 {
+    Q_UNUSED(event);
     if (!ui->closeButton->isEnabled())
         exit(0);
 }
