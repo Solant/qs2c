@@ -18,6 +18,7 @@ private:
     void checkFolders();
 public:
     SyncProvider();
+    ~SyncProvider();
     void deleteApp(int index);
     void addApp(AppData data);
 public slots:

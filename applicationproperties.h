@@ -1,9 +1,10 @@
 #ifndef APPLICATIONPROPERTIES_H
 #define APPLICATIONPROPERTIES_H
 
-#include "appdata.h"
-
 #include <QDialog>
+
+#include "appdata.h"
+#include "applicationpropertiestablemodel.h"
 
 namespace Ui {
 class ApplicationProperties;
@@ -19,6 +20,7 @@ public:
 
 private:
     Ui::ApplicationProperties *ui;
+    ApplicationPropertiesTableModel *model;
     AppData app;
 };
 

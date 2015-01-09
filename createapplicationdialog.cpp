@@ -43,7 +43,7 @@ void CreateApplicationDialog::on_saveButton_clicked()
     if (!filePath.endsWith(".xml"))
         filePath.append(".xml");
 
-    XMLParser xml;
+    XmlParser xml;
     xml.writeAppSettings(m_AppData, filePath);
     this->close();
 }

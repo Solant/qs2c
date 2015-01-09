@@ -15,6 +15,12 @@ SyncProvider::SyncProvider()
     checkFolders();
 }
 
+SyncProvider::~SyncProvider()
+{
+   if(m_Watcher)
+       delete m_Watcher;
+}
+
 void SyncProvider::deleteApp(int index)
 {
     AppData a = SettingsContainer::apps()->at(index);

@@ -34,12 +34,13 @@ private slots:
     void actionProperties_triggered();
 private:
     Ui::MainWindow *ui;
-    XMLParser *parser;
+    XmlParser *parser;
     SyncProvider *sync;
     QSystemTrayIcon *trayIcon;
     MainWindowApplicationListModel *model;
     QAction* actionDelete;
     QAction* actionProperties;
+    QMenu* rightClickMenu;
     void startUp();
 
 public slots:

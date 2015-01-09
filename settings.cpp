@@ -31,8 +31,8 @@ void Settings::on_closeButton_clicked()
 
 void Settings::on_applyButton_clicked()
 {
-    SettingsContainer::m_Map->insert("cloud-folder", ui->cloudFolderLineEdit->text());
-    XMLParser xml;
+    SettingsContainer::setSettingValue("cloud-folder", ui->cloudFolderLineEdit->text());
+    XmlParser xml;
     xml.writeSettings();
     ui->closeButton->setEnabled(true);
     this->close();

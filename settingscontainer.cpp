@@ -10,7 +10,7 @@ QString SettingsContainer::m_SettingsFolder = "";
 
 QMap<QString, QString>* SettingsContainer::settings()
 {
-    XMLParser* parser = new XMLParser();
+    XmlParser* parser = new XmlParser();
     if(!m_Map)
         m_Map = parser->readSettings();
 
@@ -18,7 +18,7 @@ QMap<QString, QString>* SettingsContainer::settings()
     return m_Map;
 }
 
-QList<AppData> *SettingsContainer::apps()
+QList<AppData>* SettingsContainer::apps()
 {
     if(!m_Apps)
         m_Apps = new QList<AppData>();
@@ -40,4 +40,14 @@ QString SettingsContainer::settingsFolder()
         m_SettingsFolder = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation)[0] + QDir::separator() + "qs2c" + QDir::separator();
 
     return m_SettingsFolder;
+}
+
+QString SettingsContainer::settingValue(const QString &key)
+{
+    return m_Map->value(key);
+}
+
+void SettingsContainer::setSettingValue(const QString &key, const QString &value)
+{
+    m_Map->insert(key, value);
 }

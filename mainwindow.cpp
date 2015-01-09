@@ -23,18 +23,25 @@ MainWindow::MainWindow(QWidget *parent) :
     sync = new SyncProvider();
     trayIcon = new QSystemTrayIcon(QIcon(":/res/icon.png"));
 
-    actionDelete = new QAction("Delete", this);
-    actionProperties = new QAction("Properties", this);
 
     model = new MainWindowApplicationListModel();
     ui->listView->setModel(model);
     ui->listView->installEventFilter(this);
     QObject::connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
                                       this, SLOT(trayIconActivated(QSystemTrayIcon::ActivationReason)));
+
+    //Right click Menu
+    actionDelete = new QAction("Delete", this);
+    actionProperties = new QAction("Properties", this);
     connect(actionDelete, SIGNAL(triggered()),
             this, SLOT(actionDelete_triggered()));
     connect(actionProperties, SIGNAL(triggered()),
             this, SLOT(actionProperties_triggered()));
+    QList<QAction*> actions;
+    actions.append(actionDelete);
+    actions.append(actionProperties);
+    rightClickMenu = new QMenu();
+    rightClickMenu->addActions(actions);
 
     startUp();
 }
@@ -43,6 +50,9 @@ MainWindow::~MainWindow()
 {
     delete sync;
     delete ui;
+    delete model;
+    delete trayIcon;
+    delete rightClickMenu;
 }
 
 void MainWindow::on_actionAdd_from_file_triggered()
@@ -79,7 +89,7 @@ void MainWindow::on_actionAbout_triggered()
 
 void MainWindow::startUp()
 {
-    QList<AppData>* list = parser->readAppsSettings(parser->preparedConfigsPaths());
+    QList<AppData>* list = parser->readAppsSettings(parser->preparedConfigsPath());
     for(int i = 0; i < list->size(); i++)
         sync->addApp(list->at(i));
 
@@ -94,7 +104,7 @@ void MainWindow::on_actionCreateNew_triggered()
 
 void MainWindow::on_actionExit_triggered()
 {
-    exit(0);
+    QCoreApplication::quit();
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -124,12 +134,7 @@ bool MainWindow::eventFilter(QObject *object, QEvent *event)
 
     if(event->type() == QEvent::ContextMenu){
         QContextMenuEvent *menuEvent = dynamic_cast<QContextMenuEvent*>(event);
-        QMenu menu(this);
-        QList<QAction*> actions;
-        actions.append(actionDelete);
-        actions.append(actionProperties);
-        menu.addActions(actions);
-        menu.exec(menuEvent->globalPos());
+        rightClickMenu->exec(menuEvent->globalPos());
         return true;
     }
 
@@ -155,6 +160,6 @@ void MainWindow::actionProperties_triggered()
         return;
 
     int selected = ui->listView->selectionModel()->selectedIndexes().at(0).row();
-    ApplicationProperties *ap = new ApplicationProperties(SettingsContainer::apps()->at(selected), this);
-    ap->exec();
+    ApplicationProperties ap(SettingsContainer::apps()->at(selected), this);
+    ap.exec();
 }

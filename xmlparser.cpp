@@ -21,12 +21,12 @@
 #define OS "OS X"
 #endif
 
-XMLParser::XMLParser()
+XmlParser::XmlParser()
 {
 
 }
 
-void XMLParser::writeSettings()
+void XmlParser::writeSettings()
 {
     QFile* file = new QFile(SettingsContainer::settingsFolder() + "settings.xml");
     if (!file->open(QIODevice::WriteOnly | QIODevice::Text)){
@@ -38,13 +38,13 @@ void XMLParser::writeSettings()
     xml.setAutoFormatting(true);
     xml.writeStartDocument();
     xml.writeStartElement("config");
-    xml.writeTextElement("cloud-folder", SettingsContainer::m_Map->value("cloud-folder"));
+    xml.writeTextElement("cloud-folder", SettingsContainer::settingValue("cloud-folder"));
     xml.writeEndElement();
     xml.writeEndDocument();
     file->close();
 }
 
-void XMLParser::writeAppSettings(AppData *appData, QString filePath)
+void XmlParser::writeAppSettings(AppData *appData, QString filePath)
 {
     QFile file(filePath);
     if(!file.open(QIODevice::WriteOnly | QIODevice::Text)){
@@ -67,9 +67,9 @@ void XMLParser::writeAppSettings(AppData *appData, QString filePath)
     file.close();
 }
 
-QMap<QString, QString> *XMLParser::readSettings()
+QMap<QString, QString> *XmlParser::readSettings()
 {
-    QFile* file = new QFile(QStandardPaths::standardLocations(QStandardPaths::ConfigLocation)[0]+"/qs2c/settings.xml");
+    QFile* file = new QFile(SettingsContainer::settingsFolder() + "settings.xml");
     if (!file->exists()){
         delete file;
         QMap<QString, QString>* map = new QMap<QString, QString>();
@@ -101,7 +101,7 @@ QMap<QString, QString> *XMLParser::readSettings()
     return map;
 }
 
-AppData XMLParser::readAppSettings(QString filePath)
+AppData XmlParser::readAppSettings(QString filePath)
 {
     QFile* file = new QFile(filePath);
     if (!file->open(QIODevice::ReadOnly | QIODevice::Text)){
@@ -136,7 +136,7 @@ AppData XMLParser::readAppSettings(QString filePath)
     return app;
 }
 
-QList<AppData> *XMLParser::readAppsSettings(QStringList files)
+QList<AppData>* XmlParser::readAppsSettings(QStringList files)
 {
     QList<AppData>* apps = new QList<AppData>();
     for(int i = 0; i < files.size(); i++)
@@ -145,7 +145,7 @@ QList<AppData> *XMLParser::readAppsSettings(QStringList files)
     return apps;
 }
 
-QStringList XMLParser::preparedConfigsPaths()
+QStringList XmlParser::preparedConfigsPath()
 {
     QDir directory(QStandardPaths::standardLocations(QStandardPaths::ConfigLocation)[0] + QDir::separator() + "qs2c" + QDir::separator() + "prepared");
     QStringList filter;

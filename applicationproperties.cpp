@@ -13,7 +13,7 @@ ApplicationProperties::ApplicationProperties(AppData appData, QWidget *parent) :
     this->setWindowTitle(app.name() + " properties");
     ui->applicationNameEdit->setText(app.name());
 
-    ApplicationPropertiesTableModel *model = new ApplicationPropertiesTableModel(appData);
+    model = new ApplicationPropertiesTableModel(appData);
     ui->tableView->setModel(model);
 
     for (int c = 0; c < ui->tableView->horizontalHeader()->count(); ++c){
@@ -24,4 +24,5 @@ ApplicationProperties::ApplicationProperties(AppData appData, QWidget *parent) :
 ApplicationProperties::~ApplicationProperties()
 {
     delete ui;
+    delete model;
 }

@@ -6,14 +6,14 @@
 
 #include "appdata.h"
 
-class XMLParser
+class XmlParser
 {
 public:
-    XMLParser();
+    XmlParser();
     QMap<QString, QString>* readSettings();
     AppData readAppSettings(QString filePath);
     QList<AppData>* readAppsSettings(QStringList files);
-    QStringList preparedConfigsPaths();
+    QStringList preparedConfigsPath();
     void writeSettings();
     void writeAppSettings(AppData* appData, QString filePath);
 };
