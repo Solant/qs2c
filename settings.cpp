@@ -11,6 +11,7 @@ Settings::Settings(QWidget *parent) :
     ui(new Ui::Settings)
 {
     ui->setupUi(this);
+    setWindowTitle("Settings");
     ui->cloudFolderLineEdit->setText(SettingsContainer::settings()->find("cloud-folder").value());
 }
 
