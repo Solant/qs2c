@@ -77,7 +77,7 @@ void MainWindow::on_actionAdd_from_file_triggered()
 
 void MainWindow::on_actionSettings_triggered()
 {
-    Settings* settings = new Settings();
+    Settings *settings = new Settings(this);
     settings->exec();
 }
 
@@ -98,12 +98,13 @@ void MainWindow::startUp()
 
 void MainWindow::on_actionCreateNew_triggered()
 {
-    CreateApplicationDialog *app = new CreateApplicationDialog(this);
-    app->exec();
+    CreateApplicationDialog app(this);
+    app.exec();
 }
 
 void MainWindow::on_actionExit_triggered()
 {
+    SettingsContainer::clear();
     QCoreApplication::quit();
 }
 

@@ -19,6 +19,7 @@ CreateApplicationDialog::CreateApplicationDialog(QWidget *parent) :
 CreateApplicationDialog::~CreateApplicationDialog()
 {
     delete ui;
+    delete model;
 }
 
 void CreateApplicationDialog::on_addButton_clicked()

@@ -51,3 +51,11 @@ void SettingsContainer::setSettingValue(const QString &key, const QString &value
 {
     m_Map->insert(key, value);
 }
+
+void SettingsContainer::clear()
+{
+    if(m_Map)
+        delete m_Map;
+    if(m_Apps)
+        delete m_Apps;
+}

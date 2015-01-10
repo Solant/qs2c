@@ -19,6 +19,7 @@ public:
     static QString settingsFolder();
     static QString settingValue(const QString &key);
     static void setSettingValue(const QString &key, const QString &value);
+    static void clear();
 };
 
 #endif // SETTINGSCONTAINER_H
