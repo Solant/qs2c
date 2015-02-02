@@ -5,6 +5,7 @@
 #include <QStandardPaths>
 #include <QList>
 #include <QXmlStreamWriter>
+#include <QRegularExpression>
 
 #include "xmlparser.h"
 #include "settingscontainer.h"
@@ -141,8 +142,12 @@ AppData* XmlParser::loadUnpreparedConfig(QString &filePath)
             app->setName(xml.readElementText());
 
         if(xml.name() == "os" && xml.isStartElement()){
-            if(OS == xml.readElementText()){
-
+            if(OS == xml.attributes().value("type")){
+                xml.readNextStartElement();
+                while(xml.name() == "file"){
+                    app->addFile(preparePath(xml.readElementText()));
+                    xml.readNextStartElement();
+                }
             }
             else
                 xml.skipCurrentElement();
@@ -156,6 +161,13 @@ AppData* XmlParser::loadUnpreparedConfig(QString &filePath)
 
     delete file;
     return app;
+}
+
+QString XmlParser::preparePath(QString filePath)
+{
+    QRegularExpression re("~");
+    filePath.replace(re, QStandardPaths::standardLocations(QStandardPaths::HomeLocation)[0]);
+    return filePath;
 }
 
 QStringList XmlParser::preparedConfigsPaths()

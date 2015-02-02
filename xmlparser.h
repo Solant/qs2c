@@ -19,6 +19,8 @@ public:
     void savePreparedConfig(AppData* appData, QString &filePath);
     AppData* prepareConfig(QString &filePath);
     AppData* loadUnpreparedConfig(QString &filePath);
+private:
+    QString preparePath(QString filePath);
 };
 
 #endif // XMLPARSER_H
