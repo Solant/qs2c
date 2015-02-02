@@ -17,7 +17,7 @@ QVariant MainWindowApplicationListModel::data(const QModelIndex &index, int role
 {
     if (index.isValid() && role == Qt::DisplayRole){
         if (SettingsContainer::apps()->size() > index.row())
-            return SettingsContainer::apps()->at(index.row()).name();
+            return SettingsContainer::apps()->at(index.row())->name();
     }
     return QVariant();
 }

@@ -11,11 +11,14 @@ class XmlParser
 public:
     XmlParser();
     QMap<QString, QString>* readSettings();
-    AppData readAppSettings(QString filePath);
-    QList<AppData>* readAppsSettings(QStringList files);
-    QStringList preparedConfigsPath();
     void writeSettings();
-    void writeAppSettings(AppData* appData, QString filePath);
+
+    QStringList preparedConfigsPaths();
+    AppData* loadPreparedConfig(QString &filePath);
+    void saveUnpreparedConfig(AppData* appData, QString &filePath);
+    void savePreparedConfig(AppData* appData, QString &filePath);
+    AppData* prepareConfig(QString &filePath);
+    AppData* loadUnpreparedConfig(QString &filePath);
 };
 
 #endif // XMLPARSER_H

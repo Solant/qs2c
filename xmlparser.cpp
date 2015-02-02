@@ -44,7 +44,7 @@ void XmlParser::writeSettings()
     file->close();
 }
 
-void XmlParser::writeAppSettings(AppData *appData, QString filePath)
+void XmlParser::saveUnpreparedConfig(AppData *appData, QString &filePath)
 {
     QFile file(filePath);
     if(!file.open(QIODevice::WriteOnly | QIODevice::Text)){
@@ -58,6 +58,29 @@ void XmlParser::writeAppSettings(AppData *appData, QString filePath)
     xml.writeStartElement("application");
     xml.writeTextElement("name", appData->name());
     xml.writeTextElement("os", OS);
+    for (int i = 0; i < appData->files().size(); i++)
+        xml.writeTextElement("file", appData->files().at(i));
+
+    xml.writeEndElement();
+    xml.writeEndDocument();
+    qDebug() << "[LOG] File " + filePath + " created";
+    file.close();
+}
+
+
+void XmlParser::savePreparedConfig(AppData *appData, QString &filePath)
+{
+    QFile file(filePath);
+    if(!file.open(QIODevice::WriteOnly | QIODevice::Text)){
+        qDebug() << "[ERROR] Unable to open " + file.fileName();
+        return;
+    }
+
+    QXmlStreamWriter xml(&file);
+    xml.setAutoFormatting(true);
+    xml.writeStartDocument();
+    xml.writeStartElement("application");
+    xml.writeTextElement("name", appData->name());
     for (int i = 0; i < appData->files().size(); i++)
         xml.writeTextElement("file", appData->files().at(i));
 
@@ -101,7 +124,7 @@ QMap<QString, QString> *XmlParser::readSettings()
     return map;
 }
 
-AppData XmlParser::readAppSettings(QString filePath)
+AppData* XmlParser::loadUnpreparedConfig(QString &filePath)
 {
     QFile* file = new QFile(filePath);
     if (!file->open(QIODevice::ReadOnly | QIODevice::Text)){
@@ -110,20 +133,19 @@ AppData XmlParser::readAppSettings(QString filePath)
     }
 
     QXmlStreamReader xml(file);
-    AppData app;
-    app.setFileName(QFileInfo(filePath).fileName());
+    AppData* app = new AppData;
+    app->setFileName(QFileInfo(filePath).fileName());
     while (!xml.atEnd() && !xml.hasError()){
         xml.readNext();
-        if (xml.name() == "name" && xml.isStartElement()){
-            app.setName(xml.readElementText());
-        }
+        if(xml.name() == "name" && xml.isStartElement())
+            app->setName(xml.readElementText());
 
-        if (xml.name() == "os" && xml.isStartElement()){
-            app.setOS(xml.readElementText());
-        }
+        if(xml.name() == "os" && xml.isStartElement()){
+            if(OS == xml.readElementText()){
 
-        if(xml.name() == "file" && xml.isStartElement()){
-            app.addFile(xml.readElementText());
+            }
+            else
+                xml.skipCurrentElement();
         }
     }
 
@@ -136,16 +158,7 @@ AppData XmlParser::readAppSettings(QString filePath)
     return app;
 }
 
-QList<AppData>* XmlParser::readAppsSettings(QStringList files)
-{
-    QList<AppData>* apps = new QList<AppData>();
-    for(int i = 0; i < files.size(); i++)
-        apps->append(readAppSettings(files.at(i)));
-
-    return apps;
-}
-
-QStringList XmlParser::preparedConfigsPath()
+QStringList XmlParser::preparedConfigsPaths()
 {
     QDir directory(QStandardPaths::standardLocations(QStandardPaths::ConfigLocation)[0] + QDir::separator() + "qs2c" + QDir::separator() + "prepared");
     QStringList filter;
@@ -156,4 +169,32 @@ QStringList XmlParser::preparedConfigsPath()
         ret.append(fileInfoList.at(i).absoluteFilePath());
 
     return ret;
+}
+
+AppData* XmlParser::loadPreparedConfig(QString &filePath)
+{
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)){
+        qDebug() << "[ERROR] Unable to open " << filePath;
+    }
+
+    QXmlStreamReader xml(&file);
+    AppData* app = new AppData;
+    app->setFileName(QFileInfo(filePath).fileName());
+    while (!xml.atEnd() && !xml.hasError()){
+        xml.readNext();
+        if (xml.name() == "name" && xml.isStartElement()){
+            app->setName(xml.readElementText());
+        }
+
+        if(xml.name() == "file" && xml.isStartElement()){
+            app->addFile(xml.readElementText());
+        }
+    }
+
+    if(xml.hasError()){
+        qDebug() << "[ERROR] Error in xml prepared xml file " << filePath << ": " << xml.errorString();
+    }
+
+    return app;
 }

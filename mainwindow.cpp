@@ -63,10 +63,10 @@ void MainWindow::on_actionAdd_from_file_triggered()
 
     QFile::copy(filePath,
                 SettingsContainer::settingsFolder() + "prepared" + QDir::separator() + QFileInfo(filePath).fileName());
-    AppData app = parser->readAppSettings(filePath);
+    AppData* app = parser->loadUnpreparedConfig(filePath);
 
     for(int i = 0; i < SettingsContainer::apps()->size(); i++)
-        if(SettingsContainer::apps()->at(i).name() == app.name()){
+        if(SettingsContainer::apps()->at(i)->name() == app->name()){
             QMessageBox::warning(this, "Warning", "Application with this name already exists");
             return;
         }
@@ -89,7 +89,11 @@ void MainWindow::on_actionAbout_triggered()
 
 void MainWindow::startUp()
 {
-    QList<AppData>* list = parser->readAppsSettings(parser->preparedConfigsPath());
+    QList<AppData*>* list = new QList<AppData*>;
+    QStringList filePaths = parser->preparedConfigsPaths();
+    for(QString filePath : filePaths)
+        list->append(parser->loadPreparedConfig(filePath));
+
     for(int i = 0; i < list->size(); i++)
         sync->addApp(list->at(i));
 

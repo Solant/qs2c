@@ -20,6 +20,7 @@ CreateApplicationDialog::~CreateApplicationDialog()
 {
     delete ui;
     delete model;
+    delete m_AppData;
 }
 
 void CreateApplicationDialog::on_addButton_clicked()
@@ -45,6 +46,6 @@ void CreateApplicationDialog::on_saveButton_clicked()
         filePath.append(".xml");
 
     XmlParser xml;
-    xml.writeAppSettings(m_AppData, filePath);
+    xml.saveUnpreparedConfig(m_AppData, filePath);
     this->close();
 }

@@ -23,10 +23,10 @@ SyncProvider::~SyncProvider()
 
 void SyncProvider::deleteApp(int index)
 {
-    AppData a = SettingsContainer::apps()->at(index);
-    m_Watcher->removePaths(a.files());
-    m_Watcher->removePaths(a.cloudFiles());
-    QFile::remove(SettingsContainer::settingsFolder() + "prepared" + QDir::separator() + a.fileName());
+    AppData* a = SettingsContainer::apps()->at(index);
+    m_Watcher->removePaths(a->files());
+    m_Watcher->removePaths(a->cloudFiles());
+    QFile::remove(SettingsContainer::settingsFolder() + "prepared" + QDir::separator() + a->fileName());
     SettingsContainer::apps()->removeAt(index);
 }
 
@@ -36,17 +36,17 @@ void SyncProvider::fileChangeHandler(QString file)
     m_Watcher->removePath(file);
     QString file2 = "";
     for(int i = 0; i < SettingsContainer::apps()->size(); i++){
-        if(SettingsContainer::apps()->at(i).cloudFiles().contains(file)){
-            AppData tmp =  SettingsContainer::apps()->at(i);
-            file2 = tmp.files().at(SettingsContainer::apps()->at(i).cloudFiles().indexOf(file));
+        if(SettingsContainer::apps()->at(i)->cloudFiles().contains(file)){
+            AppData* tmp =  SettingsContainer::apps()->at(i);
+            file2 = tmp->files().at(SettingsContainer::apps()->at(i)->cloudFiles().indexOf(file));
             break;
         }
     }
     if(file2 == ""){
         for(int i = 0; i < SettingsContainer::apps()->size(); i++){
-            if(SettingsContainer::apps()->at(i).files().contains(file)){
-                AppData tmp =  SettingsContainer::apps()->at(i);
-                file2 = tmp.cloudFiles().at(SettingsContainer::apps()->at(i).files().indexOf(file));
+            if(SettingsContainer::apps()->at(i)->files().contains(file)){
+                AppData* tmp =  SettingsContainer::apps()->at(i);
+                file2 = tmp->cloudFiles().at(SettingsContainer::apps()->at(i)->files().indexOf(file));
                 break;
             }
         }
@@ -57,31 +57,31 @@ void SyncProvider::fileChangeHandler(QString file)
     m_Watcher->addPath(file2);
 }
 
-void SyncProvider::addApp(AppData data)
+void SyncProvider::addApp(AppData* data)
 {
-    QDir appDir(SettingsContainer::settings()->value("cloud-folder") + QDir::separator() + ".qs2c" + QDir().separator() + "apps" + QDir().separator() + data.name());
+    QDir appDir(SettingsContainer::settings()->value("cloud-folder") + QDir::separator() + ".qs2c" + QDir().separator() + "apps" + QDir().separator() + data->name());
     if(!appDir.exists()){
         QDir().mkdir(appDir.absolutePath());
         QStringList tmp;
-        for(int i = 0; i < data.files().size(); i++){
-            QFile::copy(data.files().at(i),
-                        appDir.absolutePath() + QDir::separator() + QFileInfo(data.files().at(i)).fileName());
-            tmp << appDir.absolutePath() + QDir::separator() + QFileInfo(data.files().at(i)).fileName();
+        for(int i = 0; i < data->files().size(); i++){
+            QFile::copy(data->files().at(i),
+                        appDir.absolutePath() + QDir::separator() + QFileInfo(data->files().at(i)).fileName());
+            tmp << appDir.absolutePath() + QDir::separator() + QFileInfo(data->files().at(i)).fileName();
         }
-        data.setCloudFiles(tmp);
+        data->setCloudFiles(tmp);
     }
     else{
         QStringList cloudFiles;
-        for(int i = 0; i < data.files().size(); i++){
-            syncFiles(data.files().at(i),
-                      appDir.absolutePath() + QDir::separator() + QFileInfo(data.files().at(i)).fileName());
-            cloudFiles << appDir.absolutePath() + QDir::separator() + QFileInfo(data.files().at(i)).fileName();
+        for(int i = 0; i < data->files().size(); i++){
+            syncFiles(data->files().at(i),
+                      appDir.absolutePath() + QDir::separator() + QFileInfo(data->files().at(i)).fileName());
+            cloudFiles << appDir.absolutePath() + QDir::separator() + QFileInfo(data->files().at(i)).fileName();
         }
-        data.setCloudFiles(cloudFiles);
+        data->setCloudFiles(cloudFiles);
         SettingsContainer::addApp(data);
     }
-    m_Watcher->addPaths(data.files());
-    m_Watcher->addPaths(data.cloudFiles());
+    m_Watcher->addPaths(data->files());
+    m_Watcher->addPaths(data->cloudFiles());
 }
 
 void SyncProvider::syncFiles(QString file0, QString file1)

@@ -4,14 +4,14 @@
 
 #include <QDebug>
 
-ApplicationProperties::ApplicationProperties(AppData appData, QWidget *parent) :
+ApplicationProperties::ApplicationProperties(AppData *appData, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::ApplicationProperties)
 {
     ui->setupUi(this);
     this->app = appData;
-    this->setWindowTitle(app.name() + " properties");
-    ui->applicationNameEdit->setText(app.name());
+    this->setWindowTitle(app->name() + " properties");
+    ui->applicationNameEdit->setText(app->name());
 
     model = new ApplicationPropertiesTableModel(appData);
     ui->tableView->setModel(model);

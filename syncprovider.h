@@ -20,7 +20,7 @@ public:
     SyncProvider();
     ~SyncProvider();
     void deleteApp(int index);
-    void addApp(AppData data);
+    void addApp(AppData *data);
 public slots:
     void fileChangeHandler(QString file);
 };
