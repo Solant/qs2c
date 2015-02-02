@@ -39,6 +39,7 @@
      </property>
      <addaction name="actionCreateNew"/>
      <addaction name="actionAdd_from_file"/>
+     <addaction name="actionAdd_from_pcgamingwiki"/>
     </widget>
     <addaction name="menuAdd_Application"/>
     <addaction name="actionSettings"/>
@@ -113,6 +114,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+M</string>
+   </property>
+  </action>
+  <action name="actionAdd_from_pcgamingwiki">
+   <property name="text">
+    <string>Add from pcgamingwiki</string>
    </property>
   </action>
  </widget>

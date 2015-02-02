@@ -32,6 +32,8 @@ private slots:
 
     void actionDelete_triggered();
     void actionProperties_triggered();
+    void on_actionAdd_from_pcgamingwiki_triggered();
+
 private:
     Ui::MainWindow *ui;
     XmlParser *parser;
