@@ -12,6 +12,7 @@
 #include "ui_mainwindow.h"
 #include "applicationproperties.h"
 #include "createapplicationdialog.h"
+#include "pcgamingwikidialog.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -167,4 +168,10 @@ void MainWindow::actionProperties_triggered()
     int selected = ui->listView->selectionModel()->selectedIndexes().at(0).row();
     ApplicationProperties ap(SettingsContainer::apps()->at(selected), this);
     ap.exec();
+}
+
+void MainWindow::on_actionAdd_from_pcgamingwiki_triggered()
+{
+   PcGamingWikiDialog pgwd;
+   pgwd.exec();
 }
