@@ -3,6 +3,7 @@
 
 #include <QMap>
 #include <QStringList>
+#include <QPair>
 
 #include "appdata.h"
 
@@ -19,6 +20,7 @@ public:
     void savePreparedConfig(AppData* appData, QString &filePath);
     AppData* prepareConfig(QString &filePath);
     AppData* loadUnpreparedConfig(QString &filePath);
+    static QPair<QStringList, QStringList> loadAppList(QString &page);
 private:
     QString preparePath(QString filePath);
 };

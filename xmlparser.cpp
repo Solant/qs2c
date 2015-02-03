@@ -163,6 +163,31 @@ AppData* XmlParser::loadUnpreparedConfig(QString &filePath)
     return app;
 }
 
+QPair<QStringList, QStringList> XmlParser::loadAppList(QString &page)
+{
+    QStringList titles;
+    QStringList hrefs;
+
+    QRegularExpression removeImTag("<img [a-zA-Z:\\/\"\\.= 0-9]+>");
+    page.remove(removeImTag);
+    page.remove(":");
+    page.remove("async");
+    QXmlStreamReader xml(page);
+    while (!xml.atEnd() && !xml.hasError()){
+        xml.readNext();
+        if(xml.name() == "a" && xml.attributes().hasAttribute("href") && xml.attributes().hasAttribute("title")){
+            titles.append(xml.attributes().value("title").toString());
+            hrefs.append(xml.attributes().value("href").toString());
+        }
+    }
+    if(xml.hasError()){
+       qDebug() << "[ERROR] Error in responce page: " + xml.errorString()
+                   + " Line: " + QString::number(xml.lineNumber());
+    }
+    QPair<QStringList, QStringList> pair(titles, hrefs);
+    return pair;
+}
+
 QString XmlParser::preparePath(QString filePath)
 {
     QRegularExpression re("~");
