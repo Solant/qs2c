@@ -188,6 +188,12 @@ QPair<QStringList, QStringList> XmlParser::loadAppList(QString &page)
     return pair;
 }
 
+QString XmlParser::loadAppConfigFromUrl(QString &page)
+{
+    qDebug() << "Wow";
+    return "";
+}
+
 QString XmlParser::preparePath(QString filePath)
 {
     QRegularExpression re("~");

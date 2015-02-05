@@ -21,6 +21,7 @@ public:
     AppData* prepareConfig(QString &filePath);
     AppData* loadUnpreparedConfig(QString &filePath);
     static QPair<QStringList, QStringList> loadAppList(QString &page);
+    static QString loadAppConfigFromUrl(QString& page);
 private:
     QString preparePath(QString filePath);
 };

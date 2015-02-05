@@ -7,6 +7,7 @@
 QMap<QString, QString>* SettingsContainer::m_Map = NULL;
 QList<AppData*>* SettingsContainer::m_Apps = NULL;
 QString SettingsContainer::m_SettingsFolder = "";
+QString SettingsContainer::m_CacheFolder = "";
 
 QMap<QString, QString>* SettingsContainer::settings()
 {
@@ -40,6 +41,14 @@ QString SettingsContainer::settingsFolder()
         m_SettingsFolder = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation)[0] + QDir::separator() + "qs2c" + QDir::separator();
 
     return m_SettingsFolder;
+}
+
+QString SettingsContainer::cacheFolder()
+{
+    if(m_SettingsFolder == "")
+        m_CacheFolder = QStandardPaths::standardLocations(QStandardPaths::CacheLocation)[0] + QDir::separator() + "qs2c" + QDir::separator();
+
+    return m_CacheFolder;
 }
 
 QString SettingsContainer::settingValue(const QString &key)
