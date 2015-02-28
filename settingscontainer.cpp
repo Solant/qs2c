@@ -4,67 +4,79 @@
 #include "settingscontainer.h"
 #include "xmlparser.h"
 
-QMap<QString, QString>* SettingsContainer::m_Map = NULL;
-QList<AppData*>* SettingsContainer::m_Apps = NULL;
-QString SettingsContainer::m_SettingsFolder = "";
-QString SettingsContainer::m_CacheFolder = "";
-
-QMap<QString, QString>* SettingsContainer::settings()
+QString SettingsContainer::settingsFolder() const
 {
-    XmlParser* parser = new XmlParser();
-    if(!m_Map)
-        m_Map = parser->readSettings();
-
-    delete parser;
-    return m_Map;
+    return QStandardPaths::displayName(QStandardPaths::ConfigLocation) + QDir::separator() + "qs2c" + QDir::separator();
 }
 
-QList<AppData*>* SettingsContainer::apps()
+void SettingsContainer::setSettingsFolder(const QString &settingsFolder)
 {
-    if(!m_Apps)
-        m_Apps = new QList<AppData*>();
-
-    return m_Apps;
+    m_settingsFolder = settingsFolder;
 }
 
-void SettingsContainer::addApp(AppData* app)
+QString SettingsContainer::cloudFolder() const
 {
-    if(!m_Apps)
-        m_Apps = new QList<AppData*>();
-
-    m_Apps->append(app);
+    return m_settings.value("cloud-folder", "");
 }
 
-QString SettingsContainer::settingsFolder()
+void SettingsContainer::setCloudFolder(const QString &cloudFolder)
 {
-    if(m_SettingsFolder == "")
-        m_SettingsFolder = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation)[0] + QDir::separator() + "qs2c" + QDir::separator();
-
-    return m_SettingsFolder;
+    m_settings.value("cloud-folder", cloudFolder);
 }
 
-QString SettingsContainer::cacheFolder()
+QList<AppData> SettingsContainer::apps() const
 {
-    if(m_SettingsFolder == "")
-        m_CacheFolder = QStandardPaths::standardLocations(QStandardPaths::CacheLocation)[0] + QDir::separator() + "qs2c" + QDir::separator();
-
-    return m_CacheFolder;
+    return m_apps;
 }
 
-QString SettingsContainer::settingValue(const QString &key)
+void SettingsContainer::setApps(const QList<AppData> &apps)
 {
-    return m_Map->value(key);
+    m_apps = apps;
 }
 
-void SettingsContainer::setSettingValue(const QString &key, const QString &value)
+QList<AppData *> SettingsContainer::apps() const
 {
-    m_Map->insert(key, value);
+    return m_apps;
 }
 
-void SettingsContainer::clear()
+void SettingsContainer::setApps(const QList<AppData *> &apps)
 {
-    if(m_Map)
-        delete m_Map;
-    if(m_Apps)
-        delete m_Apps;
+    m_apps = apps;
+}
+
+void SettingsContainer::addApp(const AppData *app)
+{
+    m_apps.append(app);
+}
+
+void SettingsContainer::writeSettings()
+{
+    XmlParser::writeSettings(m_settings);
+}
+
+bool SettingsContainer::containsAppWithName(const QString &name)
+{
+    for(int i = 0; i < m_apps.size(); i++)
+        if(m_apps.at(i)->name() == name)
+            return true;
+
+    return false;
+}
+
+SettingsContainer::SettingsContainer()
+{
+    m_settings = XmlParser::readSettings();
+}
+
+QString SettingsContainer::cacheFolder() const
+{
+    QString folder = m_settings.value("cache-folder", "");
+    if(folder == "")
+        return QStandardPaths::displayName(QStandardPaths::CacheLocation) + QDir::separator() + "qs2c";
+    return folder;
+}
+
+void SettingsContainer::setCacheFolder(const QString &cacheFolder)
+{
+    m_settings.insert("cache-folder", cacheFolder);
 }

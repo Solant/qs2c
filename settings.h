@@ -23,6 +23,8 @@ private slots:
     void on_pushButton_clicked();
     void closeEvent(QCloseEvent *event);
 
+    void on_cleanCacheButton_clicked();
+
 private:
     Ui::Settings *ui;
 };

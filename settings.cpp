@@ -13,6 +13,8 @@ Settings::Settings(QWidget *parent) :
     ui->setupUi(this);
     setWindowTitle("Settings");
     ui->cloudFolderLineEdit->setText(SettingsContainer::settings()->find("cloud-folder").value());
+    QFile cache(SettingsContainer::cacheFolder() + "gameList");
+    ui->cacheSizeLabel->setText(QString::number(cache.size()/1000) + " KB");
 }
 
 void Settings::disableCancelButton()
@@ -60,4 +62,13 @@ void Settings::closeEvent(QCloseEvent *event)
     Q_UNUSED(event);
     if (!ui->closeButton->isEnabled())
         exit(0);
+}
+
+void Settings::on_cleanCacheButton_clicked()
+{
+    QFile cache(SettingsContainer::cacheFolder() + "gameList");
+    if(cache.exists()){
+        cache.remove();
+        ui->cacheSizeLabel->setText("0 KB");
+    }
 }

@@ -59,29 +59,50 @@ void SyncProvider::fileChangeHandler(QString file)
 
 void SyncProvider::addApp(AppData* data)
 {
-    QDir appDir(SettingsContainer::settings()->value("cloud-folder") + QDir::separator() + ".qs2c" + QDir().separator() + "apps" + QDir().separator() + data->name());
+    QDir appDir(settings.cloudFolder() + QDir::separator() + ".qs2c" + QDir().separator() + "apps" + QDir().separator() + data->name() + QDir::separator());
     if(!appDir.exists()){
-        QDir().mkdir(appDir.absolutePath());
-        QStringList tmp;
-        for(int i = 0; i < data->files().size(); i++){
-            QFile::copy(data->files().at(i),
-                        appDir.absolutePath() + QDir::separator() + QFileInfo(data->files().at(i)).fileName());
-            tmp << appDir.absolutePath() + QDir::separator() + QFileInfo(data->files().at(i)).fileName();
+        appDir.mkpath(appDir.path());
+        for(PathNode* pathNode : data->pathNodes()){
+            QFileInfo pathInfo(pathNode->path());
+            if(pathInfo.isFile()){
+                pathNode->setCloudPath(appDir.path() + pathInfo.fileName());
+                QFile::copy(pathNode->path(), pathNode->cloudPath());
+                m_Watcher->addPath(pathNode->path());
+                m_Watcher->addPath(pathNode->cloudPath());
+                connect(m_Watcher, SIGNAL(fileChanged(QString)),
+                        pathNode, SLOT(fileChanged(QString)));
+            }
+            if(pathInfo.isDir()){
+                //TODO dir copy
+            }
         }
-        data->setCloudFiles(tmp);
+    } else{
+
     }
-    else{
-        QStringList cloudFiles;
-        for(int i = 0; i < data->files().size(); i++){
-            syncFiles(data->files().at(i),
-                      appDir.absolutePath() + QDir::separator() + QFileInfo(data->files().at(i)).fileName());
-            cloudFiles << appDir.absolutePath() + QDir::separator() + QFileInfo(data->files().at(i)).fileName();
-        }
-        data->setCloudFiles(cloudFiles);
-        SettingsContainer::addApp(data);
-    }
-    m_Watcher->addPaths(data->files());
-    m_Watcher->addPaths(data->cloudFiles());
+    settings.addApp(data);
+//    QDir appDir(SettingsContainer::settings()->value("cloud-folder") + QDir::separator() + ".qs2c" + QDir().separator() + "apps" + QDir().separator() + data->name());
+//    if(!appDir.exists()){
+//        QDir().mkdir(appDir.absolutePath());
+//        QStringList tmp;
+//        for(int i = 0; i < data->files().size(); i++){
+//            QFile::copy(data->files().at(i),
+//                        appDir.absolutePath() + QDir::separator() + QFileInfo(data->files().at(i)).fileName());
+//            tmp << appDir.absolutePath() + QDir::separator() + QFileInfo(data->files().at(i)).fileName();
+//        }
+//        data->setCloudFiles(tmp);
+//    }
+//    else{
+//        QStringList cloudFiles;
+//        for(int i = 0; i < data->files().size(); i++){
+//            syncFiles(data->files().at(i),
+//                      appDir.absolutePath() + QDir::separator() + QFileInfo(data->files().at(i)).fileName());
+//            cloudFiles << appDir.absolutePath() + QDir::separator() + QFileInfo(data->files().at(i)).fileName();
+//        }
+//        data->setCloudFiles(cloudFiles);
+//        SettingsContainer::addApp(data);
+//    }
+//    m_Watcher->addPaths(data->files());
+//    m_Watcher->addPaths(data->cloudFiles());
 }
 
 void SyncProvider::syncFiles(QString file0, QString file1)
@@ -121,6 +142,11 @@ void SyncProvider::checkFolders()
         QDir().mkpath(SettingsContainer::settingsFolder());                         //Windows fix for standard path
         QDir().mkdir(SettingsContainer::settingsFolder() + "prepared");
         QDir().mkdir(SettingsContainer::settingsFolder() + "original");
+    }
+
+    if(!QDir(SettingsContainer::cacheFolder()).exists()){
+        qDebug() << "[LOG] Folder " + SettingsContainer::cacheFolder() + " not found, creating";
+        QDir().mkpath(SettingsContainer::cacheFolder());
     }
 
     QString cloud = SettingsContainer::settings()->value("cloud-folder");

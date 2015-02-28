@@ -1,36 +1,24 @@
 #ifndef APPDATA_H
 #define APPDATA_H
 
-#include <QStringList>
+#include <QString>
+#include "pathnode.h"
 
 class AppData
 {
 private:
-    QStringList m_Files;
-    QStringList m_CloudFiles;
-    QString m_Name;
-    QString m_FileName;
-    QString m_OS;
-
+    QString m_name;
+    QString m_fileName;
+    QList<PathNode*> m_pathNodes;
 public:
     AppData();
     ~AppData();
-
-    QStringList files() const;
-    QString fileName() const;
-    QStringList cloudFiles() const;
     QString name() const;
-    QString oS() const;
-
-    void setFiles(QStringList *files);
-    void setName(const QString name);
+    void setName(const QString &name);
+    QString fileName() const;
     void setFileName(const QString &fileName);
-    void setCloudFiles(const QStringList &cloudFiles);
-    void setOS(const QString &OS);
-
-    void addFile(const QString file);
-
-    void removeAt(int index);
+    QList<PathNode*> pathNodes() const;
+    void setPathNodes(const QList<PathNode*> &pathNodes);
 };
 
 #endif // APPDATA_H

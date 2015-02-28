@@ -25,16 +25,17 @@ public slots:
 
 private slots:
     void on_updateButton_clicked();
-
     void on_selectButton_clicked();
 
 private:
     Ui::PcGamingWikiDialog *ui;
-    void updateDatabase();
     QNetworkAccessManager* m_manager;
     QCompleter *m_completer;
     QStringListModel *m_model;
     QPair<QStringList, QStringList> gamesListPair;
+    void updateDatabase();
+    void saveCachedList();
+    void loadCachedList();
 };
 
 #endif // PCGAMINGWIKIDIALOG_H

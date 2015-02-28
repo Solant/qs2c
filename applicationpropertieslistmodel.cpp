@@ -33,7 +33,7 @@ void ApplicationPropertiesListModel::addFile(const QString file)
 void ApplicationPropertiesListModel::removeFiles(QModelIndexList list)
 {
     for(int i = 0; i < list.size(); i++){
-        m_AppData->removeAt(list.at(i).row());
+        m_AppData->removeFileAt(list.at(i).row());
     }
 
     QVector<int> roles;

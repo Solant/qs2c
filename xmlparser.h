@@ -11,8 +11,8 @@ class XmlParser
 {
 public:
     XmlParser();
-    QMap<QString, QString>* readSettings();
-    void writeSettings();
+    static QMap<QString, QString>* readSettings();
+    void writeSettings(QMap<QString, QString> *map);
 
     QStringList preparedConfigsPaths();
     AppData* loadPreparedConfig(QString &filePath);

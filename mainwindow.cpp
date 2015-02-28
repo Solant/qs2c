@@ -29,7 +29,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->listView->setModel(model);
     ui->listView->installEventFilter(this);
     QObject::connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
-                                      this, SLOT(trayIconActivated(QSystemTrayIcon::ActivationReason)));
+                    this, SLOT(trayIconActivated(QSystemTrayIcon::ActivationReason)));
 
     //Right click Menu
     actionDelete = new QAction("Delete", this);
@@ -54,6 +54,7 @@ MainWindow::~MainWindow()
     delete model;
     delete trayIcon;
     delete rightClickMenu;
+//    SettingsContainer::clear(); TODO fix memory clean
 }
 
 void MainWindow::on_actionAdd_from_file_triggered()
@@ -62,15 +63,14 @@ void MainWindow::on_actionAdd_from_file_triggered()
     if(filePath == "")
         return;
 
-    QFile::copy(filePath,
-                SettingsContainer::settingsFolder() + "prepared" + QDir::separator() + QFileInfo(filePath).fileName());
+//    QFile::copy(filePath,
+//                SettingsContainer::settingsFolder() + "prepared" + QDir::separator() + QFileInfo(filePath).fileName());
     AppData* app = parser->loadUnpreparedConfig(filePath);
 
-    for(int i = 0; i < SettingsContainer::apps()->size(); i++)
-        if(SettingsContainer::apps()->at(i)->name() == app->name()){
-            QMessageBox::warning(this, "Warning", "Application with this name already exists");
-            return;
-        }
+    if(settings.containsAppWithName(app->name())){
+        QMessageBox::warning(this, "Warning", "Application with this name already exists");
+        return;
+    }
 
     sync->addApp(app);
     model->update();
@@ -90,13 +90,9 @@ void MainWindow::on_actionAbout_triggered()
 
 void MainWindow::startUp()
 {
-    QList<AppData*>* list = new QList<AppData*>;
     QStringList filePaths = parser->preparedConfigsPaths();
     for(QString filePath : filePaths)
-        list->append(parser->loadPreparedConfig(filePath));
-
-    for(int i = 0; i < list->size(); i++)
-        sync->addApp(list->at(i));
+        sync->addApp(parser->loadPreparedConfig(filePath));
 
     model->update();
 }

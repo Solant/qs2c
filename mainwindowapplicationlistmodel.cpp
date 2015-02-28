@@ -10,14 +10,14 @@ MainWindowApplicationListModel::MainWindowApplicationListModel()
 int MainWindowApplicationListModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return SettingsContainer::apps()->size();
+    return settngs.apps().size();
 }
 
 QVariant MainWindowApplicationListModel::data(const QModelIndex &index, int role) const
 {
     if (index.isValid() && role == Qt::DisplayRole){
         if (SettingsContainer::apps()->size() > index.row())
-            return SettingsContainer::apps()->at(index.row())->name();
+            return settngs.apps().at(i)->name();
     }
     return QVariant();
 }
@@ -28,5 +28,5 @@ void MainWindowApplicationListModel::update()
     for (int i = 0; i < SettingsContainer::apps()->size(); i++)
         roles.append(Qt::DisplayRole);
 
-    emit dataChanged(this->index(0), this->index(SettingsContainer::apps()->size()), roles);
+    emit dataChanged(this->index(0), this->index(settings.apps()->size()), roles);
 }

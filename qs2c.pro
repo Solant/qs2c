@@ -4,8 +4,8 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
-QT	 += network
+QT      += core gui
+QT	    += network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -25,7 +25,8 @@ SOURCES += main.cpp\
     createapplicationdialog.cpp \
     applicationpropertieslistmodel.cpp \
     mainwindowapplicationlistmodel.cpp \
-    pcgamingwikidialog.cpp
+    pcgamingwikidialog.cpp \
+    pathnode.cpp
 
 HEADERS  += mainwindow.h \
     xmlparser.h \
@@ -38,7 +39,8 @@ HEADERS  += mainwindow.h \
     createapplicationdialog.h \
     applicationpropertieslistmodel.h \
     mainwindowapplicationlistmodel.h \
-    pcgamingwikidialog.h
+    pcgamingwikidialog.h \
+    pathnode.h
 
 FORMS    += mainwindow.ui \
     settings.ui \
