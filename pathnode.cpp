@@ -1,14 +1,17 @@
 #include <QMap>
+#include <QFileInfo>
+#include <QDir>
+
 #include "pathnode.h"
 
-void PathNode::setPath(const QString &value)
+void PathNode::setLocalPath(const QString &value)
 {
-    m_path = value;
+    m_localPath = value;
 }
 
-QString PathNode::path() const
+QString PathNode::localPath() const
 {
-    return m_path;
+    return m_localPath;
 }
 
 QString PathNode::cloudPath() const
@@ -36,18 +39,45 @@ void PathNode::insertProperty(const QString &key, const QString &value)
     m_properties->insert(key, value);
 }
 
+void PathNode::startWatching()
+{
+    m_watcher->addPath(m_localPath);
+    m_watcher->addPath(m_cloudPath);
+    if(QFileInfo(m_localPath).isFile())
+        connect(m_watcher, SIGNAL(fileChanged(QString)),
+                this, SLOT(fileChanged(QString)));
+    else
+        connect(m_watcher, SIGNAL(directoryChanged(QString)),
+                this, SLOT(directoryChanged(QString)));
+}
+
+void PathNode::stopWatching()
+{
+    m_watcher->removePath(m_localPath);
+    m_watcher->removePath(m_cloudPath);
+}
+
 void PathNode::fileChanged(QString file)
 {
     //TODO connection to syncprovider
 }
+
+void PathNode::directoryChanged(QString directory)
+{
+    //TODO connection to syncprovider
+}
+
 PathNode::PathNode(QObject *parent) : QObject(parent)
 {
-
+    m_watcher = new QFileSystemWatcher();
 }
 
 PathNode::~PathNode()
 {
     if(m_properties)
         delete m_properties;
+
+    if(m_watcher)
+        delete m_watcher;
 }
 

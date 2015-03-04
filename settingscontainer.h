@@ -5,12 +5,10 @@
 
 #include "appdata.h"
 
-extern SettingsContainer settngs;
-
 class SettingsContainer
 {
 private:
-    QMap<QString, QString> m_settings;
+    QMap<QString, QString>* m_settings;
     QList<AppData *> m_apps;
 public:
     SettingsContainer();
@@ -22,9 +20,14 @@ public:
     void setCloudFolder(const QString &cloudFolder);
     QList<AppData *> apps() const;
     void setApps(const QList<AppData *> &apps);
-    void addApp(const AppData *app);
+    void addApp(AppData *app);
     void writeSettings();
     bool containsAppWithName(const QString &name);
+    QMap<QString, QString> *settingsMap();
+
+signals:
+    void appAdded(AppData*);
 };
+
 
 #endif // SETTINGSCONTAINER_H

@@ -21,10 +21,21 @@ void AppData::setPathNodes(const QList<PathNode *> &pathNodes)
     m_pathNodes = pathNodes;
 }
 
-void AppData::addPathNode(const PathNode *pathNode)
+void AppData::addPathNode(PathNode *pathNode)
 {
     m_pathNodes.append(pathNode);
 }
+
+AppData::AppData()
+{
+
+}
+
+AppData::~AppData()
+{
+
+}
+
 QString AppData::name() const
 {
     return m_name;

@@ -6,14 +6,16 @@
 #include "settingscontainer.h"
 #include "xmlparser.h"
 
+extern SettingsContainer settings;
+
 Settings::Settings(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Settings)
 {
     ui->setupUi(this);
     setWindowTitle("Settings");
-    ui->cloudFolderLineEdit->setText(SettingsContainer::settings()->find("cloud-folder").value());
-    QFile cache(SettingsContainer::cacheFolder() + "gameList");
+    ui->cloudFolderLineEdit->setText(settings.cloudFolder());
+    QFile cache(settings.cacheFolder() + "gameList");
     ui->cacheSizeLabel->setText(QString::number(cache.size()/1000) + " KB");
 }
 
@@ -34,9 +36,9 @@ void Settings::on_closeButton_clicked()
 
 void Settings::on_applyButton_clicked()
 {
-    SettingsContainer::setSettingValue("cloud-folder", ui->cloudFolderLineEdit->text());
+    settings.setCloudFolder(ui->cloudFolderLineEdit->text());
     XmlParser xml;
-    xml.writeSettings();
+    xml.writeSettings(settings.settingsMap());
     ui->closeButton->setEnabled(true);
     this->close();
 }
@@ -66,7 +68,7 @@ void Settings::closeEvent(QCloseEvent *event)
 
 void Settings::on_cleanCacheButton_clicked()
 {
-    QFile cache(SettingsContainer::cacheFolder() + "gameList");
+    QFile cache(settings.cacheFolder() + "gameList");
     if(cache.exists()){
         cache.remove();
         ui->cacheSizeLabel->setText("0 KB");

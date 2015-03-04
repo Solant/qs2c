@@ -8,7 +8,7 @@ ApplicationPropertiesTableModel::ApplicationPropertiesTableModel(AppData *app, Q
 int ApplicationPropertiesTableModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return app->files().size();
+    return app->pathNodes().size();
 }
 
 int ApplicationPropertiesTableModel::columnCount(const QModelIndex &parent) const
@@ -21,10 +21,10 @@ QVariant ApplicationPropertiesTableModel::data(const QModelIndex &index, int rol
 {
     if (role == Qt::DisplayRole){
         if(index.column() == 0)
-            return app->files().at(index.row());
+            return app->pathNodes().at(index.row())->localPath();
 
         if(index.column() == 1)
-            return app->cloudFiles().at(index.row());
+            return app->pathNodes().at(index.row())->cloudPath();
     }
     return QVariant();
 }

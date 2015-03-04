@@ -19,6 +19,7 @@ public:
     void setFileName(const QString &fileName);
     QList<PathNode*> pathNodes() const;
     void setPathNodes(const QList<PathNode*> &pathNodes);
+    void addPathNode(PathNode *pathNode);
 };
 
 #endif // APPDATA_H

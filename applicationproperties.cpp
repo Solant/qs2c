@@ -1,8 +1,8 @@
+#include <QDebug>
+
 #include "applicationproperties.h"
 #include "ui_applicationproperties.h"
 #include "applicationpropertiestablemodel.h"
-
-#include <QDebug>
 
 ApplicationProperties::ApplicationProperties(AppData *appData, QWidget *parent) :
     QDialog(parent),

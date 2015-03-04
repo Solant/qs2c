@@ -8,6 +8,8 @@
 #include "xmlparser.h"
 #include "settingscontainer.h"
 
+extern SettingsContainer settings;
+
 PcGamingWikiDialog::PcGamingWikiDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::PcGamingWikiDialog)
@@ -84,7 +86,7 @@ void PcGamingWikiDialog::updateDatabase()
 
 void PcGamingWikiDialog::saveCachedList()
 {
-    QString fileName = SettingsContainer::cacheFolder() + "gameList";
+    QString fileName = settings.cacheFolder() + "gameList";
     QFile cache(fileName);
     if(!cache.open(QIODevice::WriteOnly)){
         return;
@@ -97,7 +99,7 @@ void PcGamingWikiDialog::saveCachedList()
 
 void PcGamingWikiDialog::loadCachedList()
 {
-    QString fileName = SettingsContainer::cacheFolder() + "gameList";
+    QString fileName = settings.cacheFolder() + "gameList";
     QFile cache(fileName);
     if(!cache.exists())
         return;

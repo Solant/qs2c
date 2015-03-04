@@ -14,20 +14,25 @@
 #include "createapplicationdialog.h"
 #include "pcgamingwikidialog.h"
 
+extern SettingsContainer settings;
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    //UI
     ui->setupUi(this);
     this->setWindowIcon(QIcon(":/res/icon.png"));
 
     sync = new SyncProvider();
-    trayIcon = new QSystemTrayIcon(QIcon(":/res/icon.png"));
 
-
+    //Model and right click handler
     model = new MainWindowApplicationListModel();
     ui->listView->setModel(model);
     ui->listView->installEventFilter(this);
+
+    //Tray icon
+    trayIcon = new QSystemTrayIcon(QIcon(":/res/icon.png"));
     QObject::connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
                     this, SLOT(trayIconActivated(QSystemTrayIcon::ActivationReason)));
 
@@ -105,7 +110,6 @@ void MainWindow::on_actionCreateNew_triggered()
 
 void MainWindow::on_actionExit_triggered()
 {
-    SettingsContainer::clear();
     QCoreApplication::quit();
 }
 
@@ -162,7 +166,7 @@ void MainWindow::actionProperties_triggered()
         return;
 
     int selected = ui->listView->selectionModel()->selectedIndexes().at(0).row();
-    ApplicationProperties ap(SettingsContainer::apps()->at(selected), this);
+    ApplicationProperties ap(settings.apps().at(selected), this);
     ap.exec();
 }
 

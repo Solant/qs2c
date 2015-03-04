@@ -23,6 +23,8 @@
 #define OS "OS X"
 #endif
 
+extern SettingsContainer settings;
+
 XmlParser::XmlParser()
 {
 
@@ -30,7 +32,7 @@ XmlParser::XmlParser()
 
 void XmlParser::writeSettings(QMap<QString, QString> *map)
 {
-    QFile* file = new QFile(SettingsContainer::settingsFolder() + "settings.xml");
+    QFile* file = new QFile(settings.settingsFolder() + "settings.xml");
     if (!file->open(QIODevice::WriteOnly | QIODevice::Text)){
         qDebug() << "[ERROR] Unable to open " + file->fileName();
         delete file;
@@ -51,7 +53,7 @@ void XmlParser::writeSettings(QMap<QString, QString> *map)
 
 QMap<QString, QString> *XmlParser::readSettings()
 {
-    QFile* file = new QFile(SettingsContainer::settingsFolder() + "settings.xml");
+    QFile* file = new QFile(settings.settingsFolder() + "settings.xml");
     if (!file->exists()){
         delete file;
         QMap<QString, QString>* map = new QMap<QString, QString>();
@@ -85,64 +87,64 @@ QMap<QString, QString> *XmlParser::readSettings()
 
 void XmlParser::saveUnpreparedConfig(AppData *appData, QString &filePath)
 {
-    QFile file(filePath);
-    if(!file.open(QIODevice::WriteOnly | QIODevice::Text)){
-        qDebug() << "[ERROR] Unable to open " + file.fileName();
-        return;
-    }
+//    QFile file(filePath);
+//    if(!file.open(QIODevice::WriteOnly | QIODevice::Text)){
+//        qDebug() << "[ERROR] Unable to open " + file.fileName();
+//        return;
+//    }
 
-    QXmlStreamWriter xml(&file);
-    xml.setAutoFormatting(true);
-    xml.writeStartDocument();
-    xml.writeStartElement("application");
-    xml.writeTextElement("name", appData->name());
-    xml.writeTextElement("os", OS);
-    for (int i = 0; i < appData->files().size(); i++)
-        xml.writeTextElement("file", appData->files().at(i));
+//    QXmlStreamWriter xml(&file);
+//    xml.setAutoFormatting(true);
+//    xml.writeStartDocument();
+//    xml.writeStartElement("application");
+//    xml.writeTextElement("name", appData->name());
+//    xml.writeTextElement("os", OS);
+//    for (int i = 0; i < appData->files().size(); i++)
+//        xml.writeTextElement("file", appData->files().at(i));
 
-    xml.writeEndElement();
-    xml.writeEndDocument();
-    qDebug() << "[LOG] File " + filePath + " created";
-    file.close();//TODO create unrepared configuration
+//    xml.writeEndElement();
+//    xml.writeEndDocument();
+//    qDebug() << "[LOG] File " + filePath + " created";
+//    file.close();//TODO create unrepared configuration
 }
 
 
 AppData* XmlParser::loadUnpreparedConfig(QString &filePath)
 {
-    QFile* file = new QFile(filePath);
-    if (!file->open(QIODevice::ReadOnly | QIODevice::Text)){
-        qDebug() << "[ERROR] Unable to open " << filePath;
-        delete file;
-    }
+//    QFile* file = new QFile(filePath);
+//    if (!file->open(QIODevice::ReadOnly | QIODevice::Text)){
+//        qDebug() << "[ERROR] Unable to open " << filePath;
+//        delete file;
+//    }
 
-    QXmlStreamReader xml(file);
-    AppData* app = new AppData;
-    app->setFileName(QFileInfo(filePath).fileName());
-    while (!xml.atEnd() && !xml.hasError()){
-        xml.readNext();
-        if(xml.name() == "name" && xml.isStartElement())
-            app->setName(xml.readElementText());
+//    QXmlStreamReader xml(file);
+//    AppData* app = new AppData;
+//    app->setFileName(QFileInfo(filePath).fileName());
+//    while (!xml.atEnd() && !xml.hasError()){
+//        xml.readNext();
+//        if(xml.name() == "name" && xml.isStartElement())
+//            app->setName(xml.readElementText());
 
-        if(xml.name() == "os" && xml.isStartElement()){
-            if(OS == xml.attributes().value("type")){
-                xml.readNextStartElement();
-                while(xml.name() == "file"){
-                    app->addFile(preparePath(xml.readElementText()));
-                    xml.readNextStartElement();
-                }
-            }
-            else
-                xml.skipCurrentElement();
-        }
-    }
+//        if(xml.name() == "os" && xml.isStartElement()){
+//            if(OS == xml.attributes().value("type")){
+//                xml.readNextStartElement();
+//                while(xml.name() == "file"){
+//                    app->addFile(preparePath(xml.readElementText()));
+//                    xml.readNextStartElement();
+//                }
+//            }
+//            else
+//                xml.skipCurrentElement();
+//        }
+//    }
 
-    if(xml.hasError()){
-        qDebug() << "[ERROR] Error in xml file " << filePath << ": " << xml.errorString();
-        delete file;
-    }
+//    if(xml.hasError()){
+//        qDebug() << "[ERROR] Error in xml file " << filePath << ": " << xml.errorString();
+//        delete file;
+//    }
 
-    delete file;
-    return app;
+//    delete file;
+//    return app;
 }
 
 QPair<QStringList, QStringList> XmlParser::loadAppList(QString &page)
@@ -227,14 +229,15 @@ void XmlParser::savePreparedConfig(AppData *appData, QString &filePath)
     xml.writeStartDocument();
     xml.writeStartElement("application");
     xml.writeTextElement("name", appData->name());
-    for(PathNode pathNode : appData->pathNodes()){
+    QList<PathNode*> pathNodes = appData->pathNodes();
+    for(PathNode *pathNode : pathNodes){
         xml.writeStartElement("path");
-        xml.writeAttribute("localpath", pathNode.path);
-        xml.writeAttribute("cloudpath", pathNode.cloudPath);
-        QStringList keys = pathNode.properties();
+        xml.writeAttribute("localpath", pathNode->localPath());
+        xml.writeAttribute("cloudpath", pathNode->cloudPath());
+        QStringList keys = pathNode->properties()->keys();
         xml.writeStartElement("properties");
         for(QString key : keys)
-            xml.writeAttribute(key, pathNode.properties->value(key));
+            xml.writeAttribute(key, pathNode->properties()->value(key));
         xml.writeEndElement();
         xml.writeEndElement();
     }
@@ -253,7 +256,7 @@ AppData* XmlParser::loadPreparedConfig(QString &filePath)
     }
 
     QXmlStreamReader xml(&file);
-    AppData* app = new AppData;
+    AppData* app = new AppData();
     app->setFileName(QFileInfo(filePath).fileName());
     while (!xml.atEnd() && !xml.hasError()){
         xml.readNext();
@@ -262,11 +265,11 @@ AppData* XmlParser::loadPreparedConfig(QString &filePath)
 
         if(xml.name() == "path" && xml.isStartElement()){
             PathNode* pathNode = new PathNode;
-            pathNode->setPath(xml.attributes().value("localpath"));
-            pathNode->setCloudPath(xml.attributes().value("cloudpath"));
+            pathNode->setLocalPath(xml.attributes().value("localpath").toString());
+            pathNode->setCloudPath(xml.attributes().value("cloudpath").toString());
             while(xml.name() != "properties" && xml.isEndElement()){
                 xml.readNext();
-                pathNode->insertProperty(xml.name(), xml.readElementText());
+                pathNode->insertProperty(xml.name().toString(), xml.readElementText());
             }
             app->addPathNode(pathNode);
         }
