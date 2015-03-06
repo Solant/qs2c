@@ -22,7 +22,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     //UI
     ui->setupUi(this);
-    this->setWindowIcon(QIcon(":/res/icon.png"));
+    this->setWindowIcon(QIcon(":/res/resources/icon.png"));
 
     sync = new SyncProvider();
 
@@ -65,13 +65,10 @@ MainWindow::~MainWindow()
 void MainWindow::on_actionAdd_from_file_triggered()
 {
     QString filePath = QFileDialog::getOpenFileName(this, tr("OpenFile"), "", tr("Application Preferences (*.xml)"));
-    if(filePath == "")
+    if(filePath.isEmpty())
         return;
 
-//    QFile::copy(filePath,
-//                SettingsContainer::settingsFolder() + "prepared" + QDir::separator() + QFileInfo(filePath).fileName());
     AppData* app = parser->loadUnpreparedConfig(filePath);
-
     if(settings.containsAppWithName(app->name())){
         QMessageBox::warning(this, "Warning", "Application with this name already exists");
         return;

@@ -8,7 +8,7 @@ SettingsContainer settings;
 
 QString SettingsContainer::settingsFolder() const
 {
-    return QStandardPaths::displayName(QStandardPaths::ConfigLocation) + QDir::separator() + "qs2c" + QDir::separator();
+    return QStandardPaths::standardLocations(QStandardPaths::ConfigLocation)[0] + QDir::separator() + "qs2c" + QDir::separator();
 }
 
 void SettingsContainer::setSettingsFolder(const QString &settingsFolder)
@@ -21,9 +21,9 @@ QString SettingsContainer::cloudFolder() const
     return m_settings->value("cloud-folder", "");
 }
 
-void SettingsContainer::setCloudFolder(const QString &cloudFolder)
+void SettingsContainer::setCloudFolder(const QString cloudFolder)
 {
-    m_settings->value("cloud-folder", cloudFolder);
+    m_settings->insert("cloud-folder", cloudFolder);
 }
 
 QList<AppData*> SettingsContainer::apps() const
@@ -69,8 +69,9 @@ SettingsContainer::SettingsContainer()
 QString SettingsContainer::cacheFolder() const
 {
     QString folder = m_settings->value("cache-folder", "");
-    if(folder == "")
-        return QStandardPaths::displayName(QStandardPaths::CacheLocation) + QDir::separator() + "qs2c" + QDir::separator();
+    if(folder.isEmpty())
+        return QStandardPaths::standardLocations(QStandardPaths::CacheLocation)[0] + QDir::separator() + "qs2c" + QDir::separator();
+
     return folder;
 }
 

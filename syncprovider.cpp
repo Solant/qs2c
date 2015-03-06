@@ -80,28 +80,25 @@ void SyncProvider::syncFiles(QString file0, QString file1)
 
 void SyncProvider::checkFolders()
 {
-    if (!QDir(settings.cloudFolder()).exists()){
-        qDebug() << "[LOG] Folder " + settings.cloudFolder() + " not found, creating";
-        QDir().mkpath(settings.cloudFolder());                         //Windows fix for standard path
-        QDir().mkdir(settings.cloudFolder() + "prepared");
-        QDir().mkdir(settings.cloudFolder() + "original");
-    }
-
     if(!QDir(settings.cacheFolder()).exists()){
         qDebug() << "[LOG] Folder " + settings.cacheFolder() + " not found, creating";
         QDir().mkpath(settings.cacheFolder());
     }
 
+    if(!QDir(settings.settingsFolder()).exists()){
+        qDebug() << "[LOG] Folder " + settings.settingsFolder() + " not found, creating";
+        QDir().mkpath(settings.settingsFolder() + "prepared");
+    }
+
     QString cloud = settings.cloudFolder();
-    if (!QDir(cloud).exists() || cloud == "none"){
+    if (!QDir(cloud).exists() || cloud.isEmpty()){
         Settings* settings = new Settings();
         settings->disableCancelButton();
         settings->exec();
     }
 
     if (!QDir(cloud + QDir::separator() + ".qs2c").exists()){
-        QDir().mkdir(cloud + QDir::separator() + ".qs2c");
-        QDir().mkdir(cloud + QDir::separator() + ".qs2c" + QDir::separator() + "shared");
+        QDir().mkpath(cloud + ".qs2c" + QDir::separator() + "shared");
         QDir().mkdir(cloud + QDir::separator() + ".qs2c" + QDir::separator() + "apps");
     }
 }

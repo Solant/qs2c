@@ -57,7 +57,7 @@ QMap<QString, QString> *XmlParser::readSettings()
     if (!file->exists()){
         delete file;
         QMap<QString, QString>* map = new QMap<QString, QString>();
-        map->insert("cloud-folder", "none");
+        map->insert("cloud-folder", "");
         return map;
     }
 
@@ -111,40 +111,38 @@ void XmlParser::saveUnpreparedConfig(AppData *appData, QString &filePath)
 
 AppData* XmlParser::loadUnpreparedConfig(QString &filePath)
 {
-//    QFile* file = new QFile(filePath);
-//    if (!file->open(QIODevice::ReadOnly | QIODevice::Text)){
-//        qDebug() << "[ERROR] Unable to open " << filePath;
-//        delete file;
-//    }
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)){
+        qDebug() << "[ERROR] Unable to open " << filePath;
+        return NULL;
+    }
 
-//    QXmlStreamReader xml(file);
-//    AppData* app = new AppData;
-//    app->setFileName(QFileInfo(filePath).fileName());
-//    while (!xml.atEnd() && !xml.hasError()){
-//        xml.readNext();
-//        if(xml.name() == "name" && xml.isStartElement())
-//            app->setName(xml.readElementText());
+    QXmlStreamReader xml(&file);
+    AppData* app = new AppData();
+    app->setFileName(QFileInfo(filePath).fileName());
+    while (!xml.atEnd() && !xml.hasError()){
+        xml.readNext();
+        if(xml.name() == "name" && xml.isStartElement())
+            app->setName(xml.readElementText());
 
-//        if(xml.name() == "os" && xml.isStartElement()){
-//            if(OS == xml.attributes().value("type")){
-//                xml.readNextStartElement();
-//                while(xml.name() == "file"){
-//                    app->addFile(preparePath(xml.readElementText()));
-//                    xml.readNextStartElement();
-//                }
-//            }
-//            else
-//                xml.skipCurrentElement();
-//        }
-//    }
+        if(xml.name() == "path" && xml.isStartElement()){
+            PathNode* pathNode = new PathNode;
+            pathNode->setLocalPath(xml.attributes().value("localpath").toString());
+            while(xml.name() != "properties" && xml.isEndElement()){
+                xml.readNext();
+                pathNode->insertProperty(xml.name().toString(), xml.readElementText());
+            }
+            app->addPathNode(pathNode);
+        }
+    }
 
-//    if(xml.hasError()){
-//        qDebug() << "[ERROR] Error in xml file " << filePath << ": " << xml.errorString();
-//        delete file;
-//    }
+    if(xml.hasError()){
+        qDebug() << "[ERROR] Error in xml prepared xml file " << filePath << ": " << xml.errorString();
+        delete app;
+        return NULL;
+    }
 
-//    delete file;
-//    return app;
+    return app;
 }
 
 QPair<QStringList, QStringList> XmlParser::loadAppList(QString &page)

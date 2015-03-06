@@ -17,7 +17,7 @@ public:
     QString settingsFolder() const;
     void setSettingsFolder(const QString &settingsFolder);
     QString cloudFolder() const;
-    void setCloudFolder(const QString &cloudFolder);
+    void setCloudFolder(const QString cloudFolder);
     QList<AppData *> apps() const;
     void setApps(const QList<AppData *> &apps);
     void addApp(AppData *app);

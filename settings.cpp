@@ -22,6 +22,7 @@ Settings::Settings(QWidget *parent) :
 void Settings::disableCancelButton()
 {
     ui->closeButton->setEnabled(false);
+    ui->applyButton->setEnabled(false);
 }
 
 Settings::~Settings()
@@ -37,15 +38,14 @@ void Settings::on_closeButton_clicked()
 void Settings::on_applyButton_clicked()
 {
     settings.setCloudFolder(ui->cloudFolderLineEdit->text());
-    XmlParser xml;
-    xml.writeSettings(settings.settingsMap());
+    XmlParser::writeSettings(settings.settingsMap());
     ui->closeButton->setEnabled(true);
     this->close();
 }
 
 void Settings::on_cloudFolderLineEdit_textChanged(const QString &arg1)
 {
-    if (QDir(arg1).exists() && arg1 != "")
+    if (QDir(arg1).exists() && !arg1.isEmpty())
         ui->applyButton->setEnabled(true);
     else
         ui->applyButton->setEnabled(false);
