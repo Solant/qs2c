@@ -12,10 +12,9 @@ class SyncProvider : public QObject
 
     Q_OBJECT
 
-private:
-    void syncFiles(QString file0, QString file1);
-    void checkFolders();
 public:
+    static void syncFiles(QString file0, QString file1);
+    void checkFolders();
     SyncProvider();
     ~SyncProvider();
     void deleteApp(int index);

@@ -36,14 +36,19 @@ void SyncProvider::addApp(AppData* data)
         if(localPathInfo.isDir() && !localPathInfo.exists())
             appDir.mkpath(pathNode->localPath());
 
-        QString cloudPath(settings.cloudFolder() + QDir::separator() + data->name() + QDir::separator());
-        if(!QDir(cloudPath).exists())
-            appDir.mkpath(cloudPath);
+        if(pathNode->cloudPath().isEmpty()){
+            QString cloudPath(settings.cloudFolder() + QDir::separator()
+                              + ".qs2c" + QDir::separator() + "apps" + QDir::separator() + data->name() + QDir::separator());
+            if(!QDir(cloudPath).exists())
+                appDir.mkpath(cloudPath);
 
-        if(!QFileInfo(cloudPath + localPathInfo.fileName()).exists() && QFileInfo(cloudPath + localPathInfo.fileName()).isDir())
-            appDir.mkpath(cloudPath + localPathInfo.fileName());
+            if(!QFileInfo(cloudPath + localPathInfo.fileName()).exists() && QFileInfo(cloudPath + localPathInfo.fileName()).isDir())
+                appDir.mkpath(cloudPath + localPathInfo.fileName());
 
         pathNode->setCloudPath(cloudPath + localPathInfo.fileName());
+        }
+
+        pathNode->startWatching();
     }
     settings.addApp(data);
 }

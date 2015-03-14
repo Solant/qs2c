@@ -24,6 +24,7 @@ public:
     void writeSettings();
     bool containsAppWithName(const QString &name);
     QMap<QString, QString> *settingsMap();
+    QString preparedConfigFolder() const;
 
 signals:
     void appAdded(AppData*);

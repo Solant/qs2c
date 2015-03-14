@@ -128,9 +128,13 @@ AppData* XmlParser::loadUnpreparedConfig(QString &filePath)
         if(xml.name() == "path" && xml.isStartElement()){
             PathNode* pathNode = new PathNode;
             pathNode->setLocalPath(xml.attributes().value("localpath").toString());
-            while(xml.name() != "properties" && xml.isEndElement()){
+            xml.readNext();
+            QString deb = xml.name().toString();
+            deb = xml.name().toString();
+            while(xml.name() != "path" && !xml.isEndElement()){
+                if(xml.name() != "")
+                    pathNode->insertProperty(xml.name().toString(), xml.readElementText());
                 xml.readNext();
-                pathNode->insertProperty(xml.name().toString(), xml.readElementText());
             }
             app->addPathNode(pathNode);
         }
@@ -177,14 +181,26 @@ QString XmlParser::loadAppConfigFromUrl(QString &page)
     page.remove(":");
     page.remove("async");
     QXmlStreamReader xml(page);
+    QString appName;
     while (!xml.atEnd() && !xml.hasError()){
         xml.readNext();
-        while(xml.name() != "span" && xml.attributes().value("id") != "Save_game_data_location"){
+
+        //Getting game title
+        if(xml.name() == "h1" && xml.attributes().value("id") == "firstHeading"){
             xml.readNext();
+            if(xml.name() == "span"){
+                appName = xml.readElementText();
+            }
         }
 
-        while(xml.name() != "span" && xml.attributes().value("id") != "Save_game_data_location"){
-            xml.readNext();
+        //Getting paths
+        if(xml.name() == "span" && xml.attributes().value("id") == "Sava_game_data_location"){
+            while (!xml.atEnd() && !xml.hasError()){
+                xml.readNext();
+                if(xml.name() == "table"){
+                    qDebug() << xml.name();
+                }
+            }
         }
     }
     if(xml.hasError()){
@@ -203,7 +219,7 @@ QString XmlParser::preparePath(QString filePath)
 
 QStringList XmlParser::preparedConfigsPaths()
 {
-    QDir directory(QStandardPaths::standardLocations(QStandardPaths::ConfigLocation)[0] + QDir::separator() + "qs2c" + QDir::separator() + "prepared");
+    QDir directory(settings.preparedConfigFolder());
     QStringList filter;
     filter << "*.xml";
     QFileInfoList fileInfoList = directory.entryInfoList(filter, QDir::Files, QDir::Name);
@@ -214,7 +230,7 @@ QStringList XmlParser::preparedConfigsPaths()
     return ret;
 }
 
-void XmlParser::savePreparedConfig(AppData *appData, QString &filePath)
+void XmlParser::savePreparedConfig(AppData *appData, QString filePath)
 {
     QFile file(filePath);
     if(!file.open(QIODevice::WriteOnly | QIODevice::Text)){
@@ -233,10 +249,8 @@ void XmlParser::savePreparedConfig(AppData *appData, QString &filePath)
         xml.writeAttribute("localpath", pathNode->localPath());
         xml.writeAttribute("cloudpath", pathNode->cloudPath());
         QStringList keys = pathNode->properties()->keys();
-        xml.writeStartElement("properties");
         for(QString key : keys)
-            xml.writeAttribute(key, pathNode->properties()->value(key));
-        xml.writeEndElement();
+            xml.writeTextElement(key, pathNode->properties()->value(key));
         xml.writeEndElement();
     }
     xml.writeEndElement();
@@ -266,8 +280,8 @@ AppData* XmlParser::loadPreparedConfig(QString &filePath)
             pathNode->setLocalPath(xml.attributes().value("localpath").toString());
             pathNode->setCloudPath(xml.attributes().value("cloudpath").toString());
             while(xml.name() != "properties" && xml.isEndElement()){
-                xml.readNext();
                 pathNode->insertProperty(xml.name().toString(), xml.readElementText());
+                xml.readNext();
             }
             app->addPathNode(pathNode);
         }

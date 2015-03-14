@@ -59,7 +59,6 @@ MainWindow::~MainWindow()
     delete model;
     delete trayIcon;
     delete rightClickMenu;
-//    SettingsContainer::clear(); TODO fix memory clean
 }
 
 void MainWindow::on_actionAdd_from_file_triggered()

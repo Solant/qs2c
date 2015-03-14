@@ -11,6 +11,11 @@ QString SettingsContainer::settingsFolder() const
     return QStandardPaths::standardLocations(QStandardPaths::ConfigLocation)[0] + QDir::separator() + "qs2c" + QDir::separator();
 }
 
+QString SettingsContainer::preparedConfigFolder() const
+{
+    return settingsFolder() + "prepared" + QDir::separator();
+}
+
 void SettingsContainer::setSettingsFolder(const QString &settingsFolder)
 {
     m_settings->insert("settings-folder", settingsFolder);
@@ -39,7 +44,7 @@ void SettingsContainer::setApps(const QList<AppData*> &apps)
 void SettingsContainer::addApp(AppData *app)
 {
     m_apps.append(app);
-//    emit appAdded(app);
+    XmlParser::savePreparedConfig(app, preparedConfigFolder() + app->name() + ".xml");
 }
 
 void SettingsContainer::writeSettings()

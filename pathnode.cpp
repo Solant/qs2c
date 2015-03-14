@@ -3,6 +3,7 @@
 #include <QDir>
 
 #include "pathnode.h"
+#include "syncprovider.h"
 
 void PathNode::setLocalPath(const QString &value)
 {
@@ -43,6 +44,7 @@ void PathNode::startWatching()
 {
     m_watcher->addPath(m_localPath);
     m_watcher->addPath(m_cloudPath);
+    SyncProvider::syncFiles(this->localPath(), this->cloudPath());
     if(QFileInfo(m_localPath).isFile())
         connect(m_watcher, SIGNAL(fileChanged(QString)),
                 this, SLOT(fileChanged(QString)));
@@ -59,7 +61,10 @@ void PathNode::stopWatching()
 
 void PathNode::fileChanged(QString file)
 {
-    //TODO connection to syncprovider
+    stopWatching();
+    SyncProvider::syncFiles(this->localPath(), this->cloudPath());
+    m_watcher->addPath(this->localPath());
+    m_watcher->addPath(this->cloudPath());
 }
 
 void PathNode::directoryChanged(QString directory)
@@ -70,6 +75,7 @@ void PathNode::directoryChanged(QString directory)
 PathNode::PathNode(QObject *parent) : QObject(parent)
 {
     m_watcher = new QFileSystemWatcher();
+    m_properties = new QMap<QString, QString>;
 }
 
 PathNode::~PathNode()

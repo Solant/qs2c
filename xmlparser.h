@@ -16,8 +16,8 @@ public:
 
     QStringList preparedConfigsPaths();
     AppData* loadPreparedConfig(QString &filePath);
-    void saveUnpreparedConfig(AppData* appData, QString &filePath);
-    void savePreparedConfig(AppData* appData, QString &filePath);
+    static void saveUnpreparedConfig(AppData* appData, QString &filePath);
+    static void savePreparedConfig(AppData* appData, QString filePath);
     AppData* prepareConfig(QString &filePath);
     AppData* loadUnpreparedConfig(QString &filePath);
     static QPair<QStringList, QStringList> loadAppList(QString &page);
