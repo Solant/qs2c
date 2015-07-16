@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/res">
         <file>resources/icon.png</file>
+        <file>resources/tino.png</file>
     </qresource>
 </RCC>

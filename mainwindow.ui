@@ -19,7 +19,7 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <widget class="QListView" name="listView"/>
+     <widget class="MainWindowListView" name="listView"/>
     </item>
    </layout>
   </widget>
@@ -126,6 +126,13 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>MainWindowListView</class>
+   <extends>QListView</extends>
+   <header location="global">mainwindowlistview.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

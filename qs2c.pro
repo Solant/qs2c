@@ -26,7 +26,8 @@ SOURCES += main.cpp\
     applicationpropertieslistmodel.cpp \
     mainwindowapplicationlistmodel.cpp \
     pcgamingwikidialog.cpp \
-    pathnode.cpp
+    pathnode.cpp \
+    mainwindowlistview.cpp
 
 HEADERS  += mainwindow.h \
     xmlparser.h \
@@ -40,7 +41,8 @@ HEADERS  += mainwindow.h \
     applicationpropertieslistmodel.h \
     mainwindowapplicationlistmodel.h \
     pcgamingwikidialog.h \
-    pathnode.h
+    pathnode.h \
+    mainwindowlistview.h
 
 FORMS    += mainwindow.ui \
     settings.ui \

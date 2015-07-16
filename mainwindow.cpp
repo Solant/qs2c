@@ -2,6 +2,7 @@
 #include <QFile>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QPainter>
 //#include <QStandardPaths>
 #include <QCloseEvent>
 
