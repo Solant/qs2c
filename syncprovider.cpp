@@ -98,7 +98,7 @@ void SyncProvider::checkFolders()
     QString cloud = settings.cloudFolder();
     if (!QDir(cloud).exists() || cloud.isEmpty()){
         Settings* settings = new Settings();
-        settings->disableCancelButton();
+        settings->showFirstLaunchDialog();
         settings->exec();
     }
 

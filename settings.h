@@ -13,7 +13,7 @@ class Settings : public QDialog
 
 public:
     explicit Settings(QWidget *parent = 0);
-    void disableCancelButton();
+    void showFirstLaunchDialog();
     ~Settings();
 
 private slots:

@@ -13,13 +13,14 @@ Settings::Settings(QWidget *parent) :
     ui(new Ui::Settings)
 {
     ui->setupUi(this);
+    ui->firstLaunchLabel->setVisible(!ui->closeButton->isVisible());
     setWindowTitle("Settings");
     ui->cloudFolderLineEdit->setText(settings.cloudFolder());
     QFile cache(settings.cacheFolder() + "gameList");
     ui->cacheSizeLabel->setText(QString::number(cache.size()/1000) + " KB");
 }
 
-void Settings::disableCancelButton()
+void Settings::showFirstLaunchDialog()
 {
     ui->closeButton->setEnabled(false);
     ui->applyButton->setEnabled(false);
