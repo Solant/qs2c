@@ -163,7 +163,7 @@ void MainWindow::actionProperties_triggered()
         return;
 
     int selected = ui->listView->selectionModel()->selectedIndexes().at(0).row();
-    ApplicationProperties ap(settings.apps().at(selected), this);
+    ApplicationProperties ap(settings.apps()->at(selected), this);
     ap.exec();
 }
 

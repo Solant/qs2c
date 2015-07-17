@@ -20,9 +20,9 @@ SyncProvider::~SyncProvider()
 
 void SyncProvider::deleteApp(int index)
 {
-    AppData* a = settings.apps().at(index);
+    AppData* a = settings.apps()->at(index);
     QFile::remove(settings.settingsFolder() + "prepared" + QDir::separator() + a->fileName());
-    settings.apps().removeAt(index);
+    settings.removeApp(index);
 }
 
 void SyncProvider::addApp(AppData* data)

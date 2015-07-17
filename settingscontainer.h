@@ -9,7 +9,7 @@ class SettingsContainer
 {
 private:
     QMap<QString, QString>* m_settings;
-    QList<AppData *> m_apps;
+    QList<AppData *>* m_apps;
 public:
     SettingsContainer();
     QString cacheFolder() const;
@@ -18,9 +18,10 @@ public:
     void setSettingsFolder(const QString &settingsFolder);
     QString cloudFolder() const;
     void setCloudFolder(const QString cloudFolder);
-    QList<AppData *> apps() const;
-    void setApps(const QList<AppData *> &apps);
+    QList<AppData *> *apps() const;
+    void setApps(QList<AppData *> *apps);
     void addApp(AppData *app);
+    void removeApp(int index);
     void writeSettings();
     bool containsAppWithName(const QString &name);
     QMap<QString, QString> *settingsMap();

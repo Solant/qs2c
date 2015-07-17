@@ -31,20 +31,25 @@ void SettingsContainer::setCloudFolder(const QString cloudFolder)
     m_settings->insert("cloud-folder", cloudFolder);
 }
 
-QList<AppData*> SettingsContainer::apps() const
+QList<AppData *> *SettingsContainer::apps() const
 {
     return m_apps;
 }
 
-void SettingsContainer::setApps(const QList<AppData*> &apps)
+void SettingsContainer::setApps(QList<AppData *> *apps)
 {
     m_apps = apps;
 }
 
 void SettingsContainer::addApp(AppData *app)
 {
-    m_apps.append(app);
+    m_apps->append(app);
     XmlParser::savePreparedConfig(app, preparedConfigFolder() + app->name() + ".xml");
+}
+
+void SettingsContainer::removeApp(int index)
+{
+    m_apps->removeAt(index);
 }
 
 void SettingsContainer::writeSettings()
@@ -54,8 +59,8 @@ void SettingsContainer::writeSettings()
 
 bool SettingsContainer::containsAppWithName(const QString &name)
 {
-    for(int i = 0; i < m_apps.size(); i++)
-        if(m_apps.at(i)->name() == name)
+    for(int i = 0; i < m_apps->size(); i++)
+        if(m_apps->at(i)->name() == name)
             return true;
 
     return false;
@@ -69,6 +74,7 @@ QMap<QString, QString> *SettingsContainer::settingsMap()
 SettingsContainer::SettingsContainer()
 {
     m_settings = XmlParser::readSettings();
+    m_apps = new QList<AppData*>;
 }
 
 QString SettingsContainer::cacheFolder() const
